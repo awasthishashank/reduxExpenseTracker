@@ -2,39 +2,33 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { saveAs } from 'file-saver';
 
-const ExpenseList = ({ expenses, onDeleteExpense, onEditExpense, onActivatePremium }) => {
+const ExpenseList = ({ expenses, onDeleteExpense, onEditExpense, onActivatePremium, premiumActivated }) => {
   const totalExpenses = expenses.reduce((total, expense) => total + parseInt(expense.amount), 0);
 
   const handleDownload = () => {
     const csvContent = 'Description,Category,Amount\n' + expenses.map(expense => `${expense.description},${expense.category},${expense.amount}`).join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'expenses.csv');
-    document.body.appendChild(link);
-    
-    link.click();
-    
-    // Clean up
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    saveAs(blob, 'expenses.csv');
   };
   
-
   return (
     <>
-      {totalExpenses > 10000 && (
-        <button onClick={onActivatePremium} className="btn btn-success mt-3 mb-3 float-end">
-          Activate Premium
+      {premiumActivated ? (
+        <button onClick={handleDownload} className="btn btn-secondary mt-3 mb-3 float-end">
+          Download CSV
         </button>
+      ) : (
+        totalExpenses > 10000 && (
+          <button onClick={onActivatePremium} className="btn btn-success mt-3 mb-3 float-end">
+            Activate Premium
+          </button>
+        )
       )}
       
-      <div className='border w-100 m-auto'>
+      <div className='border w-100 m-auto '>
         <h2 className='text-center mb-0'>Expenses</h2>
-        <table className="table table-striped">
+        <table className="table table-striped ">
           <thead>
             <tr>
               <th className='bg-success text-white'>Description</th>
@@ -52,13 +46,13 @@ const ExpenseList = ({ expenses, onDeleteExpense, onEditExpense, onActivatePremi
                 <td>
                   <button
                     onClick={() => onEditExpense(expense)}
-                    className="btn btn-primary btn-sm mr-10"
+                    className="btn btn-primary btn-sm me-3"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => onDeleteExpense(expense.id)}
-                    className="btn btn-danger btn-sm ml-5"
+                    className="btn btn-danger btn-sm "
                   >
                     Delete
                   </button>
@@ -76,9 +70,6 @@ const ExpenseList = ({ expenses, onDeleteExpense, onEditExpense, onActivatePremi
           </tfoot>
         </table>
       </div>
-      <button onClick={handleDownload} className="btn btn-secondary mb-3 float-end">
-        Download CSV
-      </button>
     </>
   );
 };

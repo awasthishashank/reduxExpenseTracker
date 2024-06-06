@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authActions, sendVerificationEmail } from '../store/authSlice';
 import { fetchExpenses, addExpense, deleteExpense, updateExpense } from '../store/expensesSlice';
-import { toggleTheme } from '../store/themeSlice'; // Import the toggleTheme action
+import { toggleTheme } from '../store/themeSlice';
 import ProfileIncomplete from './ProfileIncomplete';
 import ExpenseForm from './ExpenseForm';
 import ExpenseList from './ExpenseList';
@@ -19,6 +19,8 @@ const Welcome = () => {
   const [verificationError, setVerificationError] = useState(null);
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [premiumActivated, setPremiumActivated] = useState(false);
+
 
   useEffect(() => {
     if (!auth.token) return;
@@ -140,19 +142,23 @@ const Welcome = () => {
   const handleToggleTheme = () => {
     dispatch(toggleTheme());
   };
+  const handleActivatePremium = () => {
+    setPremiumActivated(true); // Define handleActivatePremium function to set premiumActivated to true
+    alert('Premium activated'); // Notify user
+  };
 
   return (
     <section className={theme === 'dark' ? 'bg-dark text-white' : 'bg-light text-dark'}>
-      
+
       <h1 className="p-3 text-center">Welcome to Expense Tracker</h1>
-      <button onClick={handleToggleTheme} className="btn btn-secondary mb-3">
+      <button onClick={handleToggleTheme} className="btn btn-secondary mb-3 float-end">
         Toggle Theme
       </button>
-      {!isProfileComplete ? <ProfileIncomplete /> : <p>Profile is complete!</p>}
+      {!isProfileComplete ? <ProfileIncomplete /> : <p> Profile is complete!</p>}
       {!auth.isEmailVerified && (
         <>
           {!verificationSent && (
-            <button onClick={handleSendVerificationEmail} className="btn btn-primary">
+            <button onClick={handleSendVerificationEmail} className=" mb-3 btn btn-link">
               Verify Email
             </button>
           )}
@@ -173,8 +179,10 @@ const Welcome = () => {
             expenses={expenses}
             onDeleteExpense={handleDeleteExpense}
             onEditExpense={setEditingExpense}
-            onActivatePremium={() => alert('Premium Activated')}
+            onActivatePremium={handleActivatePremium}
+            premiumActivated={premiumActivated}
           />
+
         </>
       )}
     </section>

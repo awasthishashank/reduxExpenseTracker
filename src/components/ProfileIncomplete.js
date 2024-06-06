@@ -12,7 +12,7 @@ const ProfileIncomplete = () => {
   return (
     <div className={classes.incomplete}>
       <p>Your profile is incomplete.</p>
-      <button onClick={completeProfileHandler}>Complete Profile</button>
+      <button onClick={completeProfileHandler} className='btn btn-link'>Complete Profile</button>
     </div>
   );
 };
